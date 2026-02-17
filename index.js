@@ -1,12 +1,13 @@
 const express = require("express");
 const dotenv = require("dotenv");
-
+const cors = require("cors");
 //require modul
 const userController = require("./src/user/user.controller");
 
 //init app
 const app = express();
 //init json
+app.use(cors());
 app.use(express.json());
 
 //config dotenv

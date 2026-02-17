@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const {createUser,getallUser} = require("./user.repository");
+const {createUser,getallUser,findUserById, deleteUser} = require("./user.repository");
 
+//create new user
 router.post("/",async(req,res)=>{
     try{
         const userData = req.body;
@@ -15,6 +16,7 @@ router.post("/",async(req,res)=>{
     };
 });
 
+//getalluser
 router.get("/",async(req,res)=>{
     try{
         const userData = await getallUser();
@@ -25,4 +27,41 @@ router.get("/",async(req,res)=>{
         res.status(400).json({message:error.message});
     };
 });
+
+//getuserbyid
+router.get("/:id", async (req, res) => {
+    try {
+        const userId = parseInt(req.params.id);
+        const userDataById = await findUserById(userId);
+
+        res.status(200).json({
+            data: userDataById
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+//delete user by id
+router.delete("/:id", async (req, res) => {
+    try {
+        const userId = parseInt(req.params.id);
+
+        const userDataById = await findUserById(userId);
+
+        if (!userDataById) {
+            return res.status(404).json({ message: "User tidak ditemukan" });
+        }
+
+        await deleteUser(userId);
+
+        res.status(200).json({
+            message: "User berhasil dihapus"
+        });
+
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
 module.exports = router;
