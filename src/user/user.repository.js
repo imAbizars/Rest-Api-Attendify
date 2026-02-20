@@ -14,7 +14,11 @@ const createUser = async({name,email,password,address,phonenumber,role})=>{
 };
 
 const getallUser = async()=>{
-    const dataUser = await prisma.user.findMany();
+    const dataUser = await prisma.user.findMany({
+        orderBy:{
+            createdAt:"desc"
+        }
+    });
     return dataUser; 
 };
 const findUserById = async(id)=>{
