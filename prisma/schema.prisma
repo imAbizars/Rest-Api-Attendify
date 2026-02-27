@@ -22,6 +22,27 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   role        Role     @default(EMPLOYED)
+  absen       Absen[]
+}
+
+model Absen {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  tanggal     DateTime @default(now())
+  jamMasuk    DateTime?
+  jamKeluar   DateTime?
+  latitude    Float
+  longitude   Float
+  status      StatusAbsen @default(HADIR)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum StatusAbsen {
+  HADIR
+  IZIN
+  SAKIT
 }
 
 enum Role {

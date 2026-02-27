@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {createUser,getallUser,findUserById, deleteUser} = require("./user.repository");
+const {createUser,getallUser,findUserById, deleteUser, editUser} = require("./user.repository");
 
 //create new user
 router.post("/",async(req,res)=>{
@@ -63,5 +63,23 @@ router.delete("/:id", async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 });
+router.patch("/:id",async (req,res) => {
+    try{
+        const userId = parseInt(req.params.id);
+        const userData = req.body
 
+        const userDatabyId = await findUserById(userId);
+        if (!userDatabyId) {
+            return res.status(404).json({ message: "User tidak ditemukan" });
+        }
+
+        const updated = await editUser(userId, userData);
+        res.status(200).json({
+            data: updated,
+            message: "Data berhasil di update"
+        });
+    }catch(error){
+        res.status(400).json({message:error.message});
+    }
+})
 module.exports = router;

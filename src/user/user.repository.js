@@ -1,11 +1,13 @@
 const prisma = require("../db/index");
+const bcrypt = require("bcryptjs");
 
 const createUser = async({name,email,password,address,phonenumber,role})=>{
+    const hashedPassword = await bcrypt.hash(password,10);
     return await prisma.user.create({
         data:{
             name,
             email,
-            password,
+            password:hashedPassword,
             address,
             phonenumber,
             role,
@@ -32,4 +34,23 @@ const deleteUser = async(id)=>{
         where:{id}
     });
 };
-module.exports = {createUser,getallUser,findUserById,deleteUser}
+
+const editUser = async(id,userData)=>{
+    if(userData.password){
+        userData.password = await bcrypt.hash(userData.password, 10);
+    }
+    return await prisma.user.update({
+        where:{
+            id:parseInt(id),
+        },
+        data:{
+            name:userData.name,
+            email:userData.email,
+            password:userData.password,
+            address:userData.address,
+            phonenumber:userData.phonenumber,
+            role:userData.role
+        }
+    })
+}
+module.exports = {createUser,getallUser,findUserById,deleteUser,editUser}

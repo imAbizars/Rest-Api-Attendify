@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 //require modul
 const userController = require("./src/user/user.controller");
-
+const authController = require("./src/auth/auth.controller");
 //init app
 const app = express();
 //init json
@@ -21,6 +21,7 @@ app.get("/",(req,res)=>{
 });
 
 //route
+app.user("/auth",authController);
 app.use("/user",userController);
 
 //port
