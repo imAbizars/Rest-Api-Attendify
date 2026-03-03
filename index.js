@@ -4,6 +4,8 @@ const cors = require("cors");
 //require modul
 const userController = require("./src/user/user.controller");
 const authController = require("./src/auth/auth.controller");
+const absenController = require("./src/absen/absen.controller");
+const {verifyAdmin,verifyToken} = require("./src/middleware/auth.middleware");
 //init app
 const app = express();
 //init json
@@ -21,8 +23,9 @@ app.get("/",(req,res)=>{
 });
 
 //route
-app.user("/auth",authController);
-app.use("/user",userController);
+app.use("/auth",authController);
+app.use("/user",verifyAdmin,userController);
+app.use("/absen",verifyToken,absenController);
 
 //port
 app.listen(PORT,()=>{
