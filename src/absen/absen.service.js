@@ -1,7 +1,7 @@
 const { createAbsen, updateJamKeluar, findAbsenHariIni } = require("./absen.repository.");
 
-const KANTOR_LAT = -6.200000; 
-const KANTOR_LNG = 106.816666;
+const KANTOR_LAT = -6.295991; 
+const KANTOR_LNG = 106.902458;
 const BATAS_JARAK_METER = 100;
 
 const hitungJarak = (lat1, lng1, lat2, lng2) => {
@@ -41,4 +41,4 @@ const absenKeluar = async (userId) => {
 
     return await updateJamKeluar(absenHariIni.id);
 };
-module.exports = { absenMasuk, absenKeluar };
+module.exports = { absenMasuk, absenKeluar};
