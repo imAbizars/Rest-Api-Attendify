@@ -1,4 +1,4 @@
-const { createAbsen, updateJamKeluar, findAbsenHariIni } = require("./absen.repository.");
+const { createAbsen, updateJamKeluar, findAbsenHariIni } = require("./absen.repository");
 
 const KANTOR_LAT = -6.295991; 
 const KANTOR_LNG = 106.902458;
@@ -22,6 +22,24 @@ const hitungJarak = (lat1, lng1, lat2, lng2) => {
 
 // Absen masuk
 const absenMasuk = async (userId, latitude, longitude) => {
+    const now = new Date();
+    const jam = now.getHours();
+    const menit = now.getMinutes();
+    
+    console.log("jam:", jam, "menit:", menit); 
+
+    let statusAbsen;
+    if (jam < 6) {
+        throw new Error("Absen masuk belum dibuka");
+    } else if (jam < 8 || (jam === 8 && menit === 0)) {
+        statusAbsen = "HADIR";
+    } else {
+        statusAbsen = "TERLAMBAT";
+    }
+
+    console.log("status:", statusAbsen); // cek status yang didapat
+    console.log("createAbsen dipanggil dengan:", { userId, latitude, longitude, statusAbsen });
+
     const jarak = hitungJarak(latitude, longitude, KANTOR_LAT, KANTOR_LNG);
     if (jarak > BATAS_JARAK_METER) {
         throw new Error(`Diluar jangkauan, jarak kamu ${Math.round(jarak)} meter dari kantor`);
@@ -30,7 +48,7 @@ const absenMasuk = async (userId, latitude, longitude) => {
     const sudahAbsen = await findAbsenHariIni(userId);
     if (sudahAbsen) throw new Error("Kamu sudah absen masuk hari ini");
 
-    return await createAbsen({ userId, latitude, longitude });
+    return await createAbsen({ userId, latitude, longitude, statusAbsen });
 };
 
 // Absen keluar

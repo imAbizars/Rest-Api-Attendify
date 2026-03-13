@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { absenMasuk, absenKeluar } = require("./absen.service");
-const {findAbsenHariIni} = require("./absen.repository.")
+const {findAbsenHariIni} = require("./absen.repository");
 
 // Absen masuk
 router.post("/masuk", async (req, res) => {
@@ -14,9 +14,15 @@ router.post("/masuk", async (req, res) => {
         }
 
         const absen = await absenMasuk(userId, latitude, longitude);
-        res.status(200).json({ message: "Absen masuk berhasil", data: absen });
+        console.log("absen:", absen); // tambah ini, cek di terminal
+        
+        res.status(200).json({ 
+            message: absen.status === "TERLAMBAT" ? "Absen berhasil, kamu terlambat" : "Absen berhasil", 
+            data: absen 
+        });
 
     } catch (error) {
+        console.log("error controller:", error.message); // tambah ini
         res.status(400).json({ message: error.message });
     }
 });

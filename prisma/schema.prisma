@@ -34,7 +34,7 @@ model Absen {
   jamKeluar   DateTime?
   latitude    Float
   longitude   Float
-  status      StatusAbsen @default(HADIR)
+  statusAbsen      StatusAbsen @default(HADIR)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -43,6 +43,7 @@ enum StatusAbsen {
   HADIR
   IZIN
   SAKIT
+  TERLAMBAT
 }
 
 enum Role {

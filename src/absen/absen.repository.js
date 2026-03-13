@@ -1,13 +1,13 @@
 const prisma = require("../db/index");
 
-const createAbsen = async ({ userId, latitude, longitude }) => {
+const createAbsen = async ({ userId, latitude, longitude,statusAbsen}) => {
     return await prisma.absen.create({
         data: {
             userId,
             latitude,
             longitude,
             jamMasuk: new Date(),
-            status: "HADIR",
+            statusAbsen
         }
     });
 };
