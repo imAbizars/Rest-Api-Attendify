@@ -23,6 +23,7 @@ const getallUser = async()=>{
     });
     return dataUser; 
 };
+
 const findUserById = async(id)=>{
     const userById = await prisma.user.findUnique({
         where : {id}
@@ -53,4 +54,11 @@ const editUser = async(id,userData)=>{
         }
     })
 }
-module.exports = {createUser,getallUser,findUserById,deleteUser,editUser}
+
+const jumlahUser = async()=>{
+    const jumlah = await prisma.user.count();
+    console.log(jumlah);
+    return jumlah;
+}
+
+module.exports = {createUser,getallUser,findUserById,deleteUser,editUser,jumlahUser}

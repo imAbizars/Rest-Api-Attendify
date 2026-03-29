@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { absenMasuk, absenKeluar } = require("./absen.service");
-const {findAbsenHariIni} = require("./absen.repository");
+const {findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan} = require("./absen.repository");
 
 // Absen masuk
 router.post("/masuk", async (req, res) => {
@@ -47,5 +47,23 @@ router.get("/hari-ini",async(req,res)=>{
         res.status(400).json({message : err.message})
     }
 })
+
+router.get("/semua-absen",async(req,res)=>{
+    try{
+        const absen = await findSemuaAbsenHariIni();
+        res.status(200).json({data : absen})
+    }catch(err){
+        res.status(400).json({message : err.message});
+    }
+});
+
+router.get("/statistik",async(req,res)=>{
+    try{
+        const data = await getStatistikBulanan();
+        res.status(200).json({data});
+    }catch(err){
+        res.status(400).json({message:err.message});
+    }
+});
 
 module.exports = router;

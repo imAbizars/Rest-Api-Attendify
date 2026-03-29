@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {createUser,getallUser,findUserById, deleteUser, editUser} = require("./user.repository");
+const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser} = require("./user.repository");
 
 //create new user
 router.post("/",async(req,res)=>{
@@ -27,6 +27,14 @@ router.get("/",async(req,res)=>{
         res.status(400).json({message:error.message});
     };
 });
+router.get("/jumlah",async(req,res)=>{
+    try{
+        const data = await jumlahUser();
+        res.status(200).json({data:data});
+    }catch(err){
+        res.status(400).json({message:err.message})
+    };
+})
 
 //getuserbyid
 router.get("/:id", async (req, res) => {
@@ -81,5 +89,7 @@ router.patch("/:id",async (req,res) => {
     }catch(error){
         res.status(400).json({message:error.message});
     }
-})
+});
+
+
 module.exports = router;
