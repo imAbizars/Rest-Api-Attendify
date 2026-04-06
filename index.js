@@ -11,7 +11,7 @@ const app = express();
 //init json
 app.use(cors());
 app.use(cors({
-    origin: "https://attendify-blush.vercel.app", // URL frontend kamu
+    origin: "https://attendify-blush.vercel.app",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
