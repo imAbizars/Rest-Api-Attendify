@@ -10,6 +10,12 @@ const {verifyAdmin,verifyToken} = require("./src/middleware/auth.middleware");
 const app = express();
 //init json
 app.use(cors());
+app.use(cors({
+    origin: "https://attendify-blush.vercel.app", // URL frontend kamu
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+}));
 app.use(express.json());
 
 //config dotenv
