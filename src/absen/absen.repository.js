@@ -50,46 +50,50 @@ const findSemuaAbsenHariIni  = async () =>{
     });
 };
 
-const getStatistikBulanan = async () => {
-    try {
-        const enamBulanLalu = new Date();
-        enamBulanLalu.setMonth(enamBulanLalu.getMonth() - 5);
-        enamBulanLalu.setDate(1);
-        enamBulanLalu.setHours(0, 0, 0, 0);
+const getStatistikBulanan = async (month, year) => {
+    console.log("tipe month:", typeof month, "nilai:", month);
+    console.log("tipe year:", typeof year, "nilai:", year);
+    
+    const m = Number(month);
+    const y = Number(year);
+    
+    console.log("setelah convert - m:", m, "y:", y);
+    console.log("isNaN m:", isNaN(m), "isNaN y:", isNaN(y));
 
-        console.log("query dari:", enamBulanLalu); // cek tanggal
-        const totalUser = await jumlahUser();
-        const data = await prisma.absen.findMany({
-            where: {
-                createdAt: { gte: enamBulanLalu }
-            },
-            select: {
-                createdAt: true,
-                statusAbsen: true, 
-            }
+    const awalBulan = new Date(y, m- 1, 1);
+    awalBulan.setHours(0, 0, 0, 0);
+    const akhirBulan = new Date(y, m, 0);
+    akhirBulan.setHours(23, 59, 59, 999);
+    console.log("awal:", awalBulan, "akhir:", akhirBulan);
+    const totalUser = await jumlahUser();
+
+    const data = await prisma.absen.findMany({
+        where: {
+            createdAt: { gte: awalBulan, lte: akhirBulan }
+        },
+        select: {
+            createdAt: true,
+            statusAbsen: true,
+        }
+    });
+
+    const hariMap = {};
+    data.forEach((absen) => {
+        const tanggal = new Date(absen.createdAt).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "short",
+            timeZone: "Asia/Jakarta"
         });
+        if (!hariMap[tanggal]) {
+            hariMap[tanggal] = { day: tanggal, hadir: 0, tidak_hadir: 0 };
+        }
+        hariMap[tanggal].hadir += 1;
+    });
 
-        console.log("data statistik:", data);
+    Object.keys(hariMap).forEach((hari) => {
+        hariMap[hari].tidak_hadir = Math.max(0, totalUser - hariMap[hari].hadir);
+    });
 
-        const bulanMap = {};
-        data.forEach((absen) => {
-            const bulan = new Date(absen.createdAt).toLocaleString("id-ID", {
-                month: "long",
-                timeZone: "Asia/Jakarta"
-            });
-            if (!bulanMap[bulan]) {
-                bulanMap[bulan] = { month: bulan, hadir: 0 };
-            }
-            bulanMap[bulan].hadir += 1;
-        });
-
-         Object.keys(bulanMap).forEach((bulan) => {
-            bulanMap[bulan].tidak_hadir = totalUser - bulanMap[bulan].hadir;
-        });
-        return Object.values(bulanMap)
-    } catch (err) {
-        console.log("error getStatistikBulanan:", err.message); 
-        throw err;
-    }
+    return Object.values(hariMap);
 };
 module.exports = { createAbsen, updateJamKeluar, findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan};

@@ -57,7 +57,6 @@ const editUser = async(id,userData)=>{
 
 const jumlahUser = async()=>{
     const jumlah = await prisma.user.count();
-    console.log(jumlah);
     return jumlah;
 }
 

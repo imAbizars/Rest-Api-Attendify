@@ -28,6 +28,4 @@ app.use("/user",verifyAdmin,userController);
 app.use("/absen",verifyToken,absenController);
 
 //port
-app.listen(PORT,()=>{
-    console.log("server berjalan di port" + PORT);
-});
+module.exports = app;
