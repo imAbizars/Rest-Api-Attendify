@@ -50,6 +50,7 @@ const findSemuaAbsenHariIni  = async () =>{
     });
 };
 
+//Statisik Absen By Month
 const getStatistikBulanan = async (month, year) => {
     console.log("tipe month:", typeof month, "nilai:", month);
     console.log("tipe year:", typeof year, "nilai:", year);
@@ -96,4 +97,58 @@ const getStatistikBulanan = async (month, year) => {
 
     return Object.values(hariMap);
 };
-module.exports = { createAbsen, updateJamKeluar, findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan};
+
+//riwayat Absen By User
+const getRiwayatAbsen = async (userId,month,year) => {
+    const m = Number(month);
+    const y = Number(year);
+
+    const awalBulan = new Date(y,m-1,1);
+    awalBulan.setHours(0, 0, 0, 0);
+    const akhirBulan = new Date(y, m, 0);
+    akhirBulan.setHours(23, 59, 59, 999);
+
+    //ambil data absen user
+    const dataAbsen = await prisma.absen.findMany({
+        where: {
+            userId,
+            createdAt: { gte: awalBulan, lte: akhirBulan }
+        },
+        orderBy: { createdAt: "asc" }
+    });
+
+    const jumlahHari = new Date(y, m, 0).getDate();
+    const hasil = [];
+
+    for (let hari = 1; hari <= jumlahHari; hari++) {
+        const tanggal = new Date(y, m - 1, hari);
+        const tanggalStr = tanggal.toLocaleDateString("id-ID", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            timeZone: "Asia/Jakarta"
+        });
+
+        // cari absen di hari ini
+        const absenHariIni = dataAbsen.find((absen) => {
+            const tglAbsen = new Date(absen.createdAt).toLocaleDateString("id-ID", {
+                timeZone: "Asia/Jakarta"
+            });
+            const tglHari = tanggal.toLocaleDateString("id-ID", {
+                timeZone: "Asia/Jakarta"
+            });
+            return tglAbsen === tglHari;
+        });
+
+        hasil.push({
+            tanggal: tanggalStr,
+            jamMasuk: absenHariIni?.jamMasuk || null,
+            jamKeluar: absenHariIni?.jamKeluar || null,
+            status: absenHariIni?.statusAbsen || "TIDAK_HADIR",
+        });
+    }
+
+    return hasil;
+};
+
+module.exports = { createAbsen, updateJamKeluar, findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen};

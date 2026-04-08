@@ -11,8 +11,11 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({
-    origin: "https://attendify-blush.vercel.app",
+ app.use(cors({
+    origin: [
+        "https://attendify-blush.vercel.app",
+        "http://localhost:5173"
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
@@ -28,4 +31,10 @@ app.use("/auth", authController);
 app.use("/user", verifyAdmin, userController);
 app.use("/absen", verifyToken, absenController);
 
+if (process.env.NODE_ENV !== "production") {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log("server berjalan di port " + PORT);
+    });
+}
 module.exports = app;
