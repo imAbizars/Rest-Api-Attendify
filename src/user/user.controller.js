@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser} = require("./user.repository");
+const multer = require("multer");
+const cloudinary = require("../lib/cloudinary");
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser,editPhotoUser} = require("./user.repository");
 
 //create new user
 router.post("/",async(req,res)=>{
@@ -34,8 +40,39 @@ router.get("/jumlah",async(req,res)=>{
     }catch(err){
         res.status(400).json({message:err.message})
     };
-})
+});
 
+router.patch("/photo", upload.single("photo"), async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        if (!req.file) {
+            return res.status(400).json({ message: "Foto tidak ditemukan" });
+        }
+
+        // upload ke cloudinary
+        const result = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                { folder: "attendify/photos" },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            ).end(req.file.buffer);
+        });
+
+        const user = await editPhotoUser(userId, result.secure_url);
+
+        res.status(200).json({
+            message: "Foto berhasil diupload",
+            photo: user.photo
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ message: error.message });
+    }
+});
 //getuserbyid
 router.get("/:id", async (req, res) => {
     try {

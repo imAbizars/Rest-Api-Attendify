@@ -60,4 +60,15 @@ const jumlahUser = async()=>{
     return jumlah;
 }
 
-module.exports = {createUser,getallUser,findUserById,deleteUser,editUser,jumlahUser}
+const editPhotoUser = async(id,photoData) =>{
+    return await prisma.user.update({
+        where:{
+            id : parseInt(id)
+        },
+        data:{
+            photo : photoData
+        }
+    })
+}
+
+module.exports = {createUser,getallUser,findUserById,deleteUser,editUser,jumlahUser,editPhotoUser}

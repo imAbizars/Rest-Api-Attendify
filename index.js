@@ -2,14 +2,14 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
+dotenv.config();
+const app = express();
+
 const userController = require("./src/user/user.controller");
 const authController = require("./src/auth/auth.controller");
 const absenController = require("./src/absen/absen.controller");
 const { verifyAdmin, verifyToken } = require("./src/middleware/auth.middleware");
 
-dotenv.config();
-
-const app = express();
 
  app.use(cors({
     origin: [
@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authController);
-app.use("/user", verifyAdmin, userController);
+app.use("/user", verifyToken, userController);
 app.use("/absen", verifyToken, absenController);
 
 if (process.env.NODE_ENV !== "production") {
