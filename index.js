@@ -29,6 +29,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authController);
 app.use("/user", verifyToken, userController);
+
 app.use("/absen", verifyToken, absenController);
 
 if (process.env.NODE_ENV !== "production") {

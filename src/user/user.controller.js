@@ -33,6 +33,17 @@ router.get("/",async(req,res)=>{
         res.status(400).json({message:error.message});
     };
 });
+router.get("/me", async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await findUserById(userId);
+        res.status(200).json({
+            data: user
+        });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
 router.get("/jumlah",async(req,res)=>{
     try{
         const data = await jumlahUser();
