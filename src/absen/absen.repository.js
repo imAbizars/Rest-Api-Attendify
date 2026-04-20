@@ -67,6 +67,15 @@ const findSemuaAbsenUserIzin = async(id)=>{
         }
     });
 };
+
+const findSemuaAbsenUserTerlambat = async (id) => {
+    return await prisma.absen.count({
+        where:{
+            userId:id,
+            statusAbsen : "TERLAMBAT"
+        }
+    })
+}
 //Statisik Absen By Month
 const getStatistikBulanan = async (month, year) => {
     console.log("tipe month:", typeof month, "nilai:", month);
@@ -168,4 +177,4 @@ const getRiwayatAbsen = async (userId,month,year) => {
     return hasil;
 };
 
-module.exports = { createAbsen, updateJamKeluar, findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen,findSemuaAbsenUser,findSemuaAbsenUserIzin};
+module.exports = { createAbsen, updateJamKeluar, findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen,findSemuaAbsenUser,findSemuaAbsenUserIzin,findSemuaAbsenUserTerlambat};
