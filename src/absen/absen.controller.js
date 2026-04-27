@@ -14,7 +14,7 @@ router.post("/masuk", async (req, res) => {
         }
 
         const absen = await absenMasuk(userId, latitude, longitude);
-        console.log("absen:", absen); // tambah ini, cek di terminal
+       
         
         res.status(200).json({ 
             message: absen.status === "TERLAMBAT" ? "Absen berhasil, kamu terlambat" : "Absen berhasil", 
@@ -22,7 +22,6 @@ router.post("/masuk", async (req, res) => {
         });
 
     } catch (error) {
-        console.log("error controller:", error.message); // tambah ini
         res.status(400).json({ message: error.message });
     }
 });
@@ -100,6 +99,7 @@ router.get("/absen-user-terlambat",async (req,res) => {
             data : dataAbsen
         });
     }catch(error){
+        
         res.status(400).json({
             message : error.message
         })
