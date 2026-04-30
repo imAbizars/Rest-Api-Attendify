@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { absenMasuk, absenKeluar } = require("./absen.service");
-const {findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen, findSemuaAbsenUser, findSemuaAbsenUserIzin, findSemuaAbsenUserTerlambat} = require("./absen.repository");
+const {findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen, findStatistikAbsenUser} = require("./absen.repository");
 
 // Absen masuk
 router.post("/masuk", async (req, res) => {
@@ -60,46 +60,14 @@ router.get("/semua-absen",async(req,res)=>{
     }
 });
 
-router.get("/absen-user",async(req,res)=>{
-    try{
-        const userId = req.user.id;
-        const dataAbsen = await findSemuaAbsenUser(userId);
-        
-        res.status(200).json({
-            data : dataAbsen
-        })
-    }catch(error){
-        res.status(400).json({
-            message : error.message
-        })
-    }
-})
-
-router.get("/absen-user-izin",async (req,res) => {
+router.get("/statistik-absen-user",async(req,res)=>{
     try {
         const userId = req.user.id;
-        const dataAbsen = await findSemuaAbsenUserIzin(userId);
-
+        const statistik = await findStatistikAbsenUser(userId);
         res.status(200).json({
-            data : dataAbsen
+            data : statistik
         })
     } catch (error) {
-        res.status(400).json({
-            message : error.message
-        })
-    }
-})
-
-router.get("/absen-user-terlambat",async (req,res) => {
-    try{
-        const userId = req.user.id;
-        const dataAbsen = await findSemuaAbsenUserTerlambat(userId);
-
-        res.status(200).json({
-            data : dataAbsen
-        });
-    }catch(error){
-        
         res.status(400).json({
             message : error.message
         })

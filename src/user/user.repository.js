@@ -1,6 +1,7 @@
 const prisma = require("../db/index");
 const bcrypt = require("bcryptjs");
 
+//method create
 const createUser = async({name,email,password,address,phonenumber,role})=>{
     const hashedPassword = await bcrypt.hash(password,10);
     return await prisma.user.create({
@@ -14,7 +15,7 @@ const createUser = async({name,email,password,address,phonenumber,role})=>{
         }
     });
 };
-
+// method find
 const getallUser = async()=>{
     const dataUser = await prisma.user.findMany({
         orderBy:{
@@ -26,16 +27,27 @@ const getallUser = async()=>{
 
 const findUserById = async(id)=>{
     const userById = await prisma.user.findUnique({
-        where : {id}
+        where : {id},
+        select:{
+            email:true,
+            name:true,
+            phonenumber:true,
+            photo : true
+        }
+        
     });
     return userById;
 };
+
+
+//method delete
 const deleteUser = async(id)=>{
     return await prisma.user.delete({
         where:{id}
     });
 };
 
+//method update
 const editUser = async(id,userData)=>{
     if(userData.password){
         userData.password = await bcrypt.hash(userData.password, 10);
@@ -55,11 +67,6 @@ const editUser = async(id,userData)=>{
     })
 }
 
-const jumlahUser = async()=>{
-    const jumlah = await prisma.user.count();
-    return jumlah;
-}
-
 const editPhotoUser = async(id,photoData) =>{
     return await prisma.user.update({
         where:{
@@ -70,5 +77,12 @@ const editPhotoUser = async(id,photoData) =>{
         }
     })
 }
+
+//method count
+const jumlahUser = async()=>{
+    const jumlah = await prisma.user.count();
+    return jumlah;
+}
+
 
 module.exports = {createUser,getallUser,findUserById,deleteUser,editUser,jumlahUser,editPhotoUser}

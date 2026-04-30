@@ -6,7 +6,7 @@ const cloudinary = require("../lib/cloudinary");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser,editPhotoUser} = require("./user.repository");
+const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser,editPhotoUser, findUserEmail, findUserTelp} = require("./user.repository");
 
 //create new user
 router.post("/",async(req,res)=>{
@@ -33,6 +33,8 @@ router.get("/",async(req,res)=>{
         res.status(400).json({message:error.message});
     };
 });
+
+//router berisikan informasi tentang me
 router.get("/me", async (req, res) => {
     try {
         const userId = req.user.id;
@@ -44,6 +46,8 @@ router.get("/me", async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 });
+
+
 router.get("/jumlah",async(req,res)=>{
     try{
         const data = await jumlahUser();
@@ -52,6 +56,8 @@ router.get("/jumlah",async(req,res)=>{
         res.status(400).json({message:err.message})
     };
 });
+
+
 
 router.patch("/photo", upload.single("photo"), async (req, res) => {
     try {

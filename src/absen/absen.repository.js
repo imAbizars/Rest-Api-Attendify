@@ -49,33 +49,38 @@ const findSemuaAbsenHariIni  = async () =>{
         orderBy: { jamMasuk: "desc" }
     });
 };
-const findSemuaAbsenUser= async (id) => {
-    return await prisma.absen.count({
-        where:{
-            userId :id,
-            statusAbsen:{
-                in:["HADIR","TERLAMBAT"]
+const findStatistikAbsenUser = async (id) => {
+    const hasil = await prisma.absen.groupBy({
+        by: ["statusAbsen"],
+        where: {
+            userId: id,
+            statusAbsen: {
+                in: ["HADIR", "TERLAMBAT", "IZIN"]
             }
-        }
-    })
-}
-const findSemuaAbsenUserIzin = async(id)=>{
-    return await prisma.absen.count({
-        where:{
-            userId : id,
-            statusAbsen:"IZIN"
+        },
+        _count: {
+            statusAbsen: true
         }
     });
+
+    const statistik = {
+        hadir: 0,
+        terlambat: 0,
+        izin: 0,
+        totalHadir: 0, 
+    };
+
+    hasil.forEach(({ statusAbsen, _count }) => {
+        if (statusAbsen === "HADIR")     statistik.hadir     = _count.statusAbsen;
+        if (statusAbsen === "TERLAMBAT") statistik.terlambat = _count.statusAbsen;
+        if (statusAbsen === "IZIN")      statistik.izin      = _count.statusAbsen;
+    });
+
+    statistik.totalHadir = statistik.hadir + statistik.terlambat;
+
+    return statistik;
 };
 
-const findSemuaAbsenUserTerlambat = async (id) => {
-    return await prisma.absen.count({
-        where:{
-            userId:id,
-            statusAbsen : "TERLAMBAT"
-        }
-    })
-}
 //Statisik Absen By Month
 const getStatistikBulanan = async (month, year) => {
     console.log("tipe month:", typeof month, "nilai:", month);
@@ -177,4 +182,4 @@ const getRiwayatAbsen = async (userId,month,year) => {
     return hasil;
 };
 
-module.exports = { createAbsen, updateJamKeluar, findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen,findSemuaAbsenUser,findSemuaAbsenUserIzin,findSemuaAbsenUserTerlambat};
+module.exports = { createAbsen, updateJamKeluar, findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen,findStatistikAbsenUser};
