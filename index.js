@@ -8,6 +8,7 @@ const app = express();
 const userController = require("./src/user/user.controller");
 const authController = require("./src/auth/auth.controller");
 const absenController = require("./src/absen/absen.controller");
+const resetpasswordController = require("./src/utils/resetpassword.controller");
 const { verifyAdmin, verifyToken } = require("./src/middleware/auth.middleware");
 
 
@@ -28,8 +29,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authController);
+app.use("/settings",resetpasswordController);
 app.use("/user", verifyToken, userController);
-
 app.use("/absen", verifyToken, absenController);
 
 if (process.env.NODE_ENV !== "production") {

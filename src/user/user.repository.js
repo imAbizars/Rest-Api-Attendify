@@ -38,7 +38,15 @@ const findUserById = async(id)=>{
     });
     return userById;
 };
-
+const findEmailUser = async(email)=>{
+    const emailUser = await prisma.user.findUnique({
+        where: {email},
+        select:{
+            email:true
+        }
+    })
+    return emailUser;
+}
 
 //method delete
 const deleteUser = async(id)=>{
@@ -78,6 +86,14 @@ const editPhotoUser = async(id,photoData) =>{
     })
 }
 
+const changePassword = async (email, newPassword) => {
+    const hashed = await bcrypt.hash(newPassword, 10);
+    return await prisma.user.update({
+        where: { email },
+        data: { password: hashed }
+    });
+};
+
 //method count
 const jumlahUser = async()=>{
     const jumlah = await prisma.user.count();
@@ -85,4 +101,4 @@ const jumlahUser = async()=>{
 }
 
 
-module.exports = {createUser,getallUser,findUserById,deleteUser,editUser,jumlahUser,editPhotoUser}
+module.exports = {createUser,getallUser,findUserById,deleteUser,editUser,jumlahUser,editPhotoUser,findEmailUser,changePassword}
