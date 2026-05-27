@@ -19,6 +19,7 @@ model User {
   role        Role     @default(EMPLOYED)
   photo       String?
   absen       Absen[]
+  Izin        Izin[]
 }
 
 model Absen {
@@ -34,11 +35,27 @@ model Absen {
   statusAbsen StatusAbsen @default(HADIR)
   user        User        @relation(fields: [userId], references: [id])
 }
+model Izin {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  keterangan  String      @db.VarChar(255)
+  user        User        @relation(fields:[userId], references:[id])
+  tanggal     DateTime    @default(now())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  status      StatusIzin  @default(Diterima)
+}
 
 enum StatusAbsen {
   HADIR
   IZIN
   TERLAMBAT
+}
+
+enum StatusIzin{
+  Diterima
+  Ditolak
+  DalamProses
 }
 
 enum Role {
