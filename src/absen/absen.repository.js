@@ -1,5 +1,6 @@
 const prisma = require("../db/index");
 const {jumlahUser} = require("../user/user.repository")
+
 const createAbsen = async ({ userId, latitude, longitude,statusAbsen}) => {
     return await prisma.absen.create({
         data: {
