@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { absenMasuk, absenKeluar } = require("./absen.service");
-const {findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen, findStatistikAbsenUser} = require("./absen.repository");
-
+const {findAbsenHariIni,findSemuaAbsenHariIni,getStatistikBulanan,getRiwayatAbsen, findStatistikAbsenUser,getAllUser} = require("./absen.repository");
+const {getallUser} = require("../user/user.repository")
 // Absen masuk
 router.post("/masuk", async (req, res) => {
     try {
@@ -99,6 +99,26 @@ router.get("/riwayatabsen",async(req,res)=>{
         res.status(400).json({
             message : err.message
         });
+    }
+})
+
+router.get("/riwayatabsen/semua",async(req,res)=>{
+    try{
+        const month = parseInt(req.query.month) || new Date().getMonth() + 1
+        const year  = parseInt(req.query.year)  || new Date().getFullYear()
+ 
+        const users = await getallUser();
+        const data = await Promise.all(
+            users.map(async (user) => ({
+                userId:  user.id,
+                nama:    user.name,
+                riwayat: await getRiwayatAbsen(user.id, month, year)
+                // riwayat = array 1 entry per hari dalam bulan tsb
+            }))
+        )
+        res.status(200).json({ data })
+    }catch(err){
+        res.status(400).json({ message: err.message })
     }
 })
 
