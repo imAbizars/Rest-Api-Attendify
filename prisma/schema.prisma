@@ -40,7 +40,8 @@ model Izin {
   userId      Int
   keterangan  String      @db.VarChar(255)
   user        User        @relation(fields:[userId], references:[id])
-  tanggal     DateTime    @default(now())
+  tanggalIzin DateTime    @default(now())
+  selesaiIzin DateTime    @default(now())
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   status      StatusIzin  @default(DalamProses)

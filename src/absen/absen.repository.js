@@ -84,15 +84,10 @@ const findStatistikAbsenUser = async (id) => {
 
 //Statisik Absen By Month
 const getStatistikBulanan = async (month, year) => {
-    console.log("tipe month:", typeof month, "nilai:", month);
-    console.log("tipe year:", typeof year, "nilai:", year);
     
     const m = Number(month);
     const y = Number(year);
     
-    console.log("setelah convert - m:", m, "y:", y);
-    console.log("isNaN m:", isNaN(m), "isNaN y:", isNaN(y));
-
     const awalBulan = new Date(y, m- 1, 1);
     awalBulan.setHours(0, 0, 0, 0);
     const akhirBulan = new Date(y, m, 0);
