@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const {findEmailUser} = require("../user/user.repository");
+const {findEmailUser,findEmailUserWithPassword, finduserByIdWithPass} = require("../user/user.repository");
 const jwt = require("jsonwebtoken");
 const {sendresetpassword} = require("../lib/mailer");
 const { changePassword } = require("../user/user.repository");
-
+const {verifyToken} = require("../middleware/auth.middleware");
+const bcrypt = require("bcryptjs")
 
 router.get("/emailUser",async(req ,res)=>{
     try{
@@ -31,7 +32,7 @@ router.get("/emailUser",async(req ,res)=>{
     }
 })
 
-router.post("/resetPassword", async (req, res) => {
+router.post("/lupaPassword", async (req, res) => {
     try {
         const { token, password } = req.body;
 
@@ -45,7 +46,32 @@ router.post("/resetPassword", async (req, res) => {
         
         res.status(200).json({ message: "Password berhasil direset" });
     } catch (error) {
+        console.error("error : ",error)
         res.status(400).json({ message: "Link tidak valid atau sudah expired" });
+    }
+});
+
+router.post("/gantiPassword", verifyToken, async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const userId = req.user.id;
+
+        const user = await finduserByIdWithPass(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User tidak ditemukan" });
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Password lama salah" });
+        }
+
+        await changePassword(userId, newPassword);
+
+        res.status(200).json({ message: "Password berhasil diubah" });
+    } catch (error) {
+        console.error("error : ",error)
+        res.status(500).json({ message: error.message });
     }
 });
 module.exports= router;

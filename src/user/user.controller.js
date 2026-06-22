@@ -6,7 +6,7 @@ const cloudinary = require("../lib/cloudinary");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser,editPhotoUser, findUserTelp} = require("./user.repository");
+const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser,editPhotoUser, findUserTelp, changeEmail} = require("./user.repository");
 
 //create new user
 router.post("/",async(req,res)=>{
@@ -33,23 +33,7 @@ router.get("/",async(req,res)=>{
         res.status(400).json({message:error.message});
     };
 });
-router.get("/emailUser",async(req ,res)=>{
-    try{
-        const {email} = req.query
-        const emailUser = await findEmailUser(email);
-        if (!emailUser) {
-            return res.status(404).json({ message: "Email tidak terdaftar" });
-        }
 
-        // TODO: kirim email reset password di sini (lihat bagian nodemailer)
-        res.status(200).json({
-            data: emailUser,
-            message: "Email terdaftar"
-        });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-})
 //router berisikan informasi tentang me
 router.get("/me", async (req, res) => {
     try {
@@ -73,15 +57,24 @@ router.get("/jumlah",async(req,res)=>{
     };
 });
 
-
-router.patch("/gantiPassword",async (req,res) => {
+router.patch("/gantiEmail",async(req,res)=>{
     try{
         const userId = req.user.id;
-        const passwordLama = req.body
-    }catch(error){
+        const {emailUser} = req.body;
 
-    }   
+        const updateEmail = await changeEmail(userId,emailUser);
+        res.status(200).json({
+            data:updateEmail
+        })
+        console.log(updateEmail)
+    }catch(error){
+        res.status(400).json({
+            message:error.message
+        })
+    }
 })
+
+
 router.patch("/photo", upload.single("photo"), async (req, res) => {
     try {
         const userId = req.user.id;
