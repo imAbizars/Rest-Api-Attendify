@@ -1,5 +1,15 @@
 const prisma = require("../db/index");
 
+const findIzinUser = async(userId)=>{
+    return await prisma.izin.findMany({
+        where:{
+            userId
+        },
+        orderBy:{
+            createdAt: "asc"
+        }
+    })
+} 
 const createIzin = async ({ userId, tanggalIzin, selesaiIzin, keterangan, status }) => {
     return await prisma.izin.create({
         data: {
@@ -19,4 +29,4 @@ const updateIzin = async ({ id, status }) => {
     });
 };
 
-module.exports = { createIzin, updateIzin };
+module.exports = { createIzin, updateIzin,findIzinUser };

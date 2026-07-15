@@ -15,7 +15,6 @@ router.get("/emailUser",async(req ,res)=>{
             return res.status(404).json({ message: "Email tidak terdaftar" });
         }
 
-        // TODO: kirim email reset password di sini (lihat bagian nodemailer)
         const token = jwt.sign(
             {email},
             process.env.JWT_SECRET,
