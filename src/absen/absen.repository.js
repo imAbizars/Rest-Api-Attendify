@@ -1,5 +1,6 @@
 const prisma = require("../db/index");
-const {jumlahUser} = require("../user/user.repository")
+const {jumlahUser} = require("../user/user.repository");
+const {getAwalHariJakarta} = require("../utils/waktuJakarta");
 
 const createAbsen = async ({ userId, latitude, longitude,statusAbsen}) => {
     return await prisma.absen.create({
@@ -21,8 +22,7 @@ const updateJamKeluar = async (id) => {
 };
 
 const findAbsenHariIni = async (userId) => {
-    const hariIni = new Date();
-    hariIni.setHours(0, 0, 0, 0);
+    const hariIni = getAwalHariJakarta();
 
     return await prisma.absen.findFirst({
         where: {

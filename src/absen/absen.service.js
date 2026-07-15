@@ -1,4 +1,6 @@
 const { createAbsen, updateJamKeluar, findAbsenHariIni } = require("./absen.repository");
+const {getJamMenitJakarta} = require("../utils/waktuJakarta");
+
 
 const KANTOR_LAT = -6.295991; 
 const KANTOR_LNG = 106.902458;
@@ -22,9 +24,7 @@ const hitungJarak = (lat1, lng1, lat2, lng2) => {
 
 // Absen masuk
 const absenMasuk = async (userId, latitude, longitude) => {
-    const now = new Date();
-    const jam = now.getHours();
-    const menit = now.getMinutes();
+    const { jam, menit } = getJamMenitJakarta();
     
     console.log("jam:", jam, "menit:", menit); 
 
