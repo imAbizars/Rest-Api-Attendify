@@ -2,7 +2,7 @@ const prisma = require("../db/index");
 const bcrypt = require("bcryptjs");
 
 //method create
-const createUser = async({name,email,password,address,phonenumber,role})=>{
+const createUser = async({name,email,password,address,phonenumber,jabatan})=>{
     const hashedPassword = await bcrypt.hash(password,10);
     return await prisma.user.create({
         data:{
@@ -11,7 +11,7 @@ const createUser = async({name,email,password,address,phonenumber,role})=>{
             password:hashedPassword,
             address,
             phonenumber,
-            role,
+            jabatan
         }
     });
 };
@@ -32,7 +32,8 @@ const findUserById = async(id)=>{
             email:true,
             name:true,
             phonenumber:true,
-            photo : true
+            photo : true,
+            jabatan:true
         }
         
     });
@@ -88,7 +89,7 @@ const editUser = async(id,userData)=>{
             password:userData.password,
             address:userData.address,
             phonenumber:userData.phonenumber,
-            role:userData.role
+            jabatan:userData.jabatan
         }
     })
 }

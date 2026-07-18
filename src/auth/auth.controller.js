@@ -8,7 +8,7 @@ router.post("/login",async(req,res)=>{
         const {email,password} = req.body;
         const validUser = await validationLogin(email,password);
         const token = jwtToken.sign(
-            { id: validUser.id, email: validUser.email, role: validUser.role },
+            { id: validUser.id, email: validUser.email, jabatan: validUser.jabatan },
             process.env.JWT_SECRET,
             { expiresIn: "1d" }
         );

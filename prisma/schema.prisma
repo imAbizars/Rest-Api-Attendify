@@ -16,7 +16,7 @@ model User {
   address     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  role        Role     @default(EMPLOYED)
+  jabatan     Jabatan  @default(Waiter)
   photo       String?
   absen       Absen[]
   Izin        Izin[]
@@ -44,8 +44,9 @@ model Izin {
   selesaiIzin DateTime    @default(now())
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  status      StatusIzin  @default(DalamProses)
+  status      StatusIzin  @default(Diproses)
 }
+
 
 enum StatusAbsen {
   HADIR
@@ -54,12 +55,16 @@ enum StatusAbsen {
 }
 
 enum StatusIzin{
-  Diterima
+  Disetujui
   Ditolak
-  DalamProses
+  Diproses
 }
 
-enum Role {
-  ADMIN
-  EMPLOYED
+enum Jabatan{
+  HRD
+  Headchef
+  Kasir
+  Bartender
+  Chef
+  Waiter
 }

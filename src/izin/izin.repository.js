@@ -9,7 +9,22 @@ const findIzinUser = async(userId)=>{
             createdAt: "asc"
         }
     })
-} 
+}
+const findAllIzinUser = async()=>{
+    return await prisma.izin.findMany({
+        orderBy:{
+            createdAt:"desc"
+        },
+        include:{
+            user:{
+                select:{
+                    name:true,
+                    jabatan:true
+                }
+            }
+        }
+    })
+}
 const createIzin = async ({ userId, tanggalIzin, selesaiIzin, keterangan, status }) => {
     return await prisma.izin.create({
         data: {
@@ -24,9 +39,8 @@ const createIzin = async ({ userId, tanggalIzin, selesaiIzin, keterangan, status
 
 const updateIzin = async ({ id, status }) => {
     return await prisma.izin.update({
-        where: { id },
+        where: { id: Number(id) }, 
         data: { status }
     });
 };
-
-module.exports = { createIzin, updateIzin,findIzinUser };
+module.exports = { createIzin, updateIzin,findIzinUser,findAllIzinUser};
