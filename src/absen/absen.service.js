@@ -37,9 +37,6 @@ const absenMasuk = async (userId, latitude, longitude) => {
         statusAbsen = "TERLAMBAT";
     }
 
-    console.log("status:", statusAbsen); // cek status yang didapat
-    console.log("createAbsen dipanggil dengan:", { userId, latitude, longitude, statusAbsen });
-
     const jarak = hitungJarak(latitude, longitude, KANTOR_LAT, KANTOR_LNG);
     if (jarak > BATAS_JARAK_METER) {
         throw new Error(`Diluar jangkauan, jarak kamu ${Math.round(jarak)} meter dari kantor`);
