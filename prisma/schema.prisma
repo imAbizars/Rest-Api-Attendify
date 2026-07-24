@@ -9,6 +9,7 @@ datasource db {
 
 model User {
   id          Int      @id @default(autoincrement())
+  kodeUser    String   @unique   
   name        String?
   email       String   @unique
   password    String
@@ -21,7 +22,6 @@ model User {
   absen       Absen[]
   Izin        Izin[]
 }
-
 model Absen {
   id          Int         @id @default(autoincrement())
   userId      Int
@@ -37,6 +37,7 @@ model Absen {
 }
 model Izin {
   id          Int         @id @default(autoincrement())
+  kodeIzin    String      @unique
   userId      Int
   keterangan  String      @db.VarChar(255)
   user        User        @relation(fields:[userId], references:[id])
@@ -46,8 +47,16 @@ model Izin {
   updatedAt   DateTime    @updatedAt
   status      StatusIzin  @default(Diproses)
 }
-
-
+model Lokasi {
+  id         Int         @id @default(autoincrement())
+  kodeLokasi String      @unique
+  nama       String
+  latitude   Float
+  longtitude Float
+  radius     Int
+  isActive   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
 enum StatusAbsen {
   HADIR
   IZIN

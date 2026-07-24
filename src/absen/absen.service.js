@@ -1,10 +1,6 @@
 const { createAbsen, updateJamKeluar, findAbsenHariIni } = require("./absen.repository");
-const {getJamMenitJakarta} = require("../utils/waktuJakarta");
-
-
-const KANTOR_LAT = -6.295991; 
-const KANTOR_LNG = 106.902458;
-const BATAS_JARAK_METER = 100;
+const { getLokasiAktif } = require("../lokasi/lokasi.repository");
+const { getJamMenitJakarta } = require("../utils/waktuJakarta");
 
 const hitungJarak = (lat1, lng1, lat2, lng2) => {
     const R = 6371000;
@@ -25,8 +21,8 @@ const hitungJarak = (lat1, lng1, lat2, lng2) => {
 // Absen masuk
 const absenMasuk = async (userId, latitude, longitude) => {
     const { jam, menit } = getJamMenitJakarta();
-    
-    console.log("jam:", jam, "menit:", menit); 
+
+    console.log("jam:", jam, "menit:", menit);
 
     let statusAbsen;
     if (jam < 6) {
@@ -37,12 +33,26 @@ const absenMasuk = async (userId, latitude, longitude) => {
         statusAbsen = "TERLAMBAT";
     }
 
-    console.log("status:", statusAbsen); // cek status yang didapat
+    console.log("status:", statusAbsen);
     console.log("createAbsen dipanggil dengan:", { userId, latitude, longitude, statusAbsen });
 
-    const jarak = hitungJarak(latitude, longitude, KANTOR_LAT, KANTOR_LNG);
-    if (jarak > BATAS_JARAK_METER) {
-        throw new Error(`Diluar jangkauan, jarak kamu ${Math.round(jarak)} meter dari kantor`);
+    // Ambil lokasi aktif dari database, bukan hardcode lagi
+    const lokasiAktif = await getLokasiAktif();
+    if (!lokasiAktif) {
+        throw new Error("Lokasi absen belum diatur. Hubungi admin.");
+    }
+
+    const jarak = hitungJarak(
+        latitude,
+        longitude,
+        lokasiAktif.latitude,
+        lokasiAktif.longtitude
+    );
+
+    if (jarak > lokasiAktif.radius) {
+        throw new Error(
+            `Diluar jangkauan lokasi ${lokasiAktif.nama}, jarak kamu ${Math.round(jarak)} meter (maksimal ${lokasiAktif.radius} meter)`
+        );
     }
 
     const sudahAbsen = await findAbsenHariIni(userId);
@@ -59,4 +69,5 @@ const absenKeluar = async (userId) => {
 
     return await updateJamKeluar(absenHariIni.id);
 };
-module.exports = { absenMasuk, absenKeluar};
+
+module.exports = { absenMasuk, absenKeluar };

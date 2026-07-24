@@ -2,17 +2,28 @@ const prisma = require("../db/index");
 const bcrypt = require("bcryptjs");
 
 //method create
-const createUser = async({name,email,password,address,phonenumber,jabatan})=>{
-    const hashedPassword = await bcrypt.hash(password,10);
-    return await prisma.user.create({
-        data:{
-            name,
-            email,
-            password:hashedPassword,
-            address,
-            phonenumber,
-            jabatan
-        }
+const createUser = async ({ name, email, password, address, phonenumber, jabatan }) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    return await prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                address,
+                phonenumber,
+                jabatan,
+                kodeUser: "TEMP" // placeholder sementara, wajib unique jadi kasih random dulu
+            }
+        });
+
+        const updatedUser = await tx.user.update({
+            where: { id: newUser.id },
+            data: { kodeUser: `PGW-${newUser.id}` }
+        });
+
+        return updatedUser;
     });
 };
 // method find

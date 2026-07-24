@@ -19,21 +19,31 @@ const findAllIzinUser = async()=>{
             user:{
                 select:{
                     name:true,
-                    jabatan:true
+                    jabatan:true,
+                    kodeUser:true
                 }
             }
         }
     })
 }
 const createIzin = async ({ userId, tanggalIzin, selesaiIzin, keterangan, status }) => {
-    return await prisma.izin.create({
-        data: {
-            userId,
-            keterangan,
-            tanggalIzin,
-            selesaiIzin,
-            status,
-        }
+    return await prisma.$transaction(async (tx) => {
+        const newIzin = await tx.izin.create({
+            data: {
+                kodeIzin: "TEMP",
+                userId,
+                tanggalIzin,
+                selesaiIzin,
+                keterangan,
+                status
+            }
+        });
+        const updatedIzin = await tx.izin.update({
+            where: { id: newIzin.id },
+            data: { kodeIzin: `IZN-${newIzin.id}` }
+        });
+
+        return updateIzin;
     });
 };
 

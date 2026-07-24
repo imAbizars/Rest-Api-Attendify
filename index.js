@@ -10,6 +10,7 @@ const authController = require("./src/auth/auth.controller");
 const absenController = require("./src/absen/absen.controller");
 const izinController = require("./src/izin/izin.controller");
 const resetpasswordController = require("./src/utils/resetpassword.controller");
+const lokasiController = require("./src/lokasi/lokasi.controller")
 const { verifyAdmin, verifyToken } = require("./src/middleware/auth.middleware");
 
 
@@ -34,6 +35,7 @@ app.use("/settings",resetpasswordController);
 app.use("/user", verifyToken, userController);
 app.use("/absen", verifyToken, absenController);
 app.use("/izin",verifyToken,izinController);
+app.use("/lokasi",verifyToken,lokasiController);
 
 if (process.env.NODE_ENV !== "production") {
     const PORT = process.env.PORT || 3000;
