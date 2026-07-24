@@ -33,7 +33,7 @@ const absenMasuk = async (userId, latitude, longitude) => {
         statusAbsen = "TERLAMBAT";
     }
 
-    console.log("status:", statusAbsen);
+    console.log("status:", statusAbsen); // cek status yang didapat
     console.log("createAbsen dipanggil dengan:", { userId, latitude, longitude, statusAbsen });
 
     // Ambil lokasi aktif dari database, bukan hardcode lagi
@@ -69,5 +69,4 @@ const absenKeluar = async (userId) => {
 
     return await updateJamKeluar(absenHariIni.id);
 };
-
-module.exports = { absenMasuk, absenKeluar };
+module.exports = { absenMasuk, absenKeluar};

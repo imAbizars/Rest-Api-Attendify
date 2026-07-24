@@ -78,9 +78,7 @@ router.get("/statistik",async(req,res)=>{
     try{
         const month = parseInt(req.query.month) || new Date().getMonth() + 1;
         const year = parseInt(req.query.year) || new Date().getFullYear();
-        console.log("month:", month, "year:", year);
         const data = await getStatistikBulanan(month,year);
-        console.log("data:",data);
         res.status(200).json({data});
     }catch(err){
         console.log("error statistik:", err.message);
