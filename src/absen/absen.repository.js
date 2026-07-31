@@ -2,18 +2,19 @@ const prisma = require("../db/index");
 const {jumlahUser} = require("../user/user.repository");
 const {getAwalHariJakarta} = require("../utils/waktuJakarta");
 
-const createAbsen = async ({ userId, latitude, longitude,statusAbsen}) => {
+const createAbsen = async ({ userId, latitude, longitude, statusAbsen, jarak, validasiLokasi }) => {
     return await prisma.absen.create({
         data: {
             userId,
             latitude,
             longitude,
             jamMasuk: new Date(),
-            statusAbsen
+            statusAbsen,
+            jarak,
+            validasiLokasi
         }
     });
 };
-
 const updateJamKeluar = async (id) => {
     return await prisma.absen.update({
         where: { id },

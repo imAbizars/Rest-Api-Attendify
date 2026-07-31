@@ -22,8 +22,6 @@ const hitungJarak = (lat1, lng1, lat2, lng2) => {
 const absenMasuk = async (userId, latitude, longitude) => {
     const { jam, menit } = getJamMenitJakarta();
 
-    console.log("jam:", jam, "menit:", menit);
-
     let statusAbsen;
     if (jam < 6) {
         throw new Error("Absen masuk belum dibuka");
@@ -33,32 +31,38 @@ const absenMasuk = async (userId, latitude, longitude) => {
         statusAbsen = "TERLAMBAT";
     }
 
-    console.log("status:", statusAbsen); // cek status yang didapat
-    console.log("createAbsen dipanggil dengan:", { userId, latitude, longitude, statusAbsen });
-
-    // Ambil lokasi aktif dari database, bukan hardcode lagi
     const lokasiAktif = await getLokasiAktif();
     if (!lokasiAktif) {
         throw new Error("Lokasi absen belum diatur. Hubungi admin.");
     }
 
-    const jarak = hitungJarak(
+    const jarakMentah = hitungJarak(
         latitude,
         longitude,
         lokasiAktif.latitude,
         lokasiAktif.longtitude
     );
 
-    if (jarak > lokasiAktif.radius) {
+    const jarak = Number(jarakMentah.toFixed(2));
+    const validasiLokasi = jarak <= lokasiAktif.radius;
+
+    if (!validasiLokasi) {
         throw new Error(
-            `Diluar jangkauan lokasi ${lokasiAktif.nama}, jarak kamu ${Math.round(jarak)} meter (maksimal ${lokasiAktif.radius} meter)`
+            `Diluar jangkauan lokasi ${lokasiAktif.nama}, jarak kamu ${jarak} meter (maksimal ${lokasiAktif.radius} meter)`
         );
     }
 
     const sudahAbsen = await findAbsenHariIni(userId);
     if (sudahAbsen) throw new Error("Kamu sudah absen masuk hari ini");
 
-    return await createAbsen({ userId, latitude, longitude, statusAbsen });
+    return await createAbsen({
+        userId,
+        latitude,
+        longitude,
+        statusAbsen,
+        jarak,
+        validasiLokasi
+    });
 };
 
 // Absen keluar
