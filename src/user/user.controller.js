@@ -6,7 +6,7 @@ const cloudinary = require("../lib/cloudinary");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser,editPhotoUser, findUserTelp, changeEmail} = require("./user.repository");
+const {createUser,getallUser,findUserById, deleteUser, editUser, jumlahUser,editPhotoUser, findUserTelp, changeEmail,changeNoTelepon} = require("./user.repository");
 
 //create new user
 router.post("/",async(req,res)=>{
@@ -73,7 +73,21 @@ router.patch("/gantiEmail",async(req,res)=>{
         })
     }
 })
+router.patch("/gantiNoTelepon", async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { noTelepon } = req.body;
 
+        const updateNoTelepon = await changeNoTelepon(userId, noTelepon);
+        res.status(200).json({
+            data: updateNoTelepon
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error.message
+        });
+    }
+});
 
 router.patch("/photo", upload.single("photo"), async (req, res) => {
     try {
