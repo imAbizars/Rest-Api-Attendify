@@ -133,6 +133,16 @@ const changeEmail = async(id,emailUser)=>{
         }
     })
 }
+const changeNoTelepon = async(id,noTelepon)=>{
+    return await prisma.user.update({
+        where:{
+            id:parseInt(id)
+        },
+        data:{
+            phonenumber : noTelepon
+        }
+    })
+}
 //method count
 const jumlahUser = async()=>{
     const jumlah = await prisma.user.count();
@@ -140,4 +150,4 @@ const jumlahUser = async()=>{
 }
 
 
-module.exports = {createUser,getallUser,findUserById,finduserByIdWithPass,deleteUser,editUser,jumlahUser,editPhotoUser,findEmailUser,findEmailUserWithPassword,changePassword,changeEmail}
+module.exports = {createUser,getallUser,findUserById,finduserByIdWithPass,deleteUser,editUser,jumlahUser,editPhotoUser,findEmailUser,findEmailUserWithPassword,changePassword,changeEmail,changeNoTelepon}
